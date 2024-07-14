@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { read, utils, writeFileXLSX } from 'xlsx';
-	import { chartRender } from '$lib/chartRender';
-	import { BarData } from '$lib/data/chartData';
+	import { LayerCake, Svg } from 'layercake';
+	import ScatterSvg from './_components/Scatter.svg.svelte';
+	import AxisX from './_components/AxisX.svg.svelte';
+	import AxisY from './_components/AxisY.svg.svelte';
 
 	type Column = {
 		Name: string;
@@ -18,6 +20,7 @@
 	// 	const ws = wb.Sheets[wb.SheetNames[0]]; // get the first worksheet
 	// 	pres = utils.sheet_to_json(ws); // generate objects and update state
 	// });
+	//
 	function exportFile() {
 		const ws = utils.json_to_sheet(pres);
 		const wb = utils.book_new();
@@ -43,74 +46,55 @@
 		console.log(pres);
 		console.log(ws);
 	}
-	// let BarData = $state({
-	// 	type: 'bar',
-	// 	data: {
-	// 		labels: ['January', 'February', 'March', 'April', 'May'],
-	// 		datasets: [
-	// 			{
-	// 				label: 'Bar Dataset',
-	// 				data: [55, 20, 30, 10, 85],
-	// 				backgroundColor: ['rgba(245, 40, 145, 0.8)']
-	// 			}
-	// 		]
-	// 	},
-	// 	options: {
-	// 		maintainAspectRatio: false
-	// 	}
-	// });
-	let testY = $state(0);
-	let testX = $state(0);
-	let Scatter = $derived({
-		type: 'scatter',
-		data: {
-			datasets: [
-				{
-					label: 'Scatter Dataset',
-					data: [
-						{
-							x: testX,
-							y: testY
-						},
-						{
-							x: 0,
-							y: 10
-						},
-						{
-							x: 10,
-							y: 5
-						},
-						{
-							x: 0.5,
-							y: 5.5
-						}
-					],
-					backgroundColor: 'rgb(255, 99, 132)'
-				}
-			],
-			options: {
-				scales: {
-					x: {
-						type: 'linear',
-						position: 'bottom'
-					}
-				}
-			}
-		}
+
+	type dataType = {
+		[columnName: string]: number;
+	};
+
+	const xKey = 'myX';
+	const yKey = 'myY';
+
+	let data: dataType[] = [
+		{ [xKey]: 1979, [yKey]: 7.19 },
+		{ [xKey]: 1980, myY: 7.43 },
+		{ [xKey]: 1981, myY: 7.24 },
+		{ [xKey]: 1983, myY: 7.44 }
+	];
+
+	const r = 3;
+	const padding = 10;
+	const color = '#fff';
+
+	data.forEach((d) => {
+		d[yKey] = +d[yKey];
 	});
+
+	function download() {
+		const svg = document
+			.getElementsByClassName('layercake-layout-svg ')[0]
+			.getElementsByTagName('g')[0];
+
+		console.log(svg);
+		const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' });
+		const link = document.createElement('a');
+		link.href = URL.createObjectURL(blob);
+		link.download = `File name test.svg`;
+		link.click();
+	}
 </script>
 
 <main>
-	<div class="w-2/5 h-44 border m-auto">
-		<canvas use:chartRender={Scatter}></canvas>
-		<canvas use:chartRender={BarData}></canvas>
+	<div class="chart-container">
+		<LayerCake padding={{ top: 10, right: 5, bottom: 20, left: 0 }} x={xKey} y={yKey} {data} debug>
+			<Svg>
+				<AxisX tickMarks={true} tickGutter="1" baseline={true} gridlines={false} />
+				<AxisY tickMarks={true} baseline={true} gridlines={false} />
+				<ScatterSvg {r} fill={color} />
+			</Svg>
+		</LayerCake>
 	</div>
 
-	<label for="test">x</label>
-	<input id="test" type="range" bind:value={testY} />
-
-	<label for="y">x</label>
-	<input id="y" type="range" bind:value={testX} />
+	<button onclick={() => download()}>Download SVG</button>
 
 	<pre>{JSON.stringify(pres, null, 2)}</pre>
 	<label for="xml">Upload XML</label>
@@ -150,5 +134,10 @@
 	:global(body) {
 		background: #222224;
 		color: #fff;
+	}
+	.chart-container {
+		width: 80%;
+		height: 400px;
+		margin: 25px auto;
 	}
 </style>
