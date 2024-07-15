@@ -1,14 +1,33 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { read, utils, writeFileXLSX } from 'xlsx';
-	import ScatterSvg from './_components/Scatter.svg.svelte';
-	import AxisX from './_components/AxisX.svg.svelte';
-	import AxisY from './_components/AxisY.svg.svelte';
+	import { RevoGrid } from '@revolist/svelte-datagrid';
+	import type { ColumnRegular } from '@revolist/revogrid';
 
-	type Column = {
-		Name: string;
-		Index: number;
-	};
+	// This part to makesure revogrid component is loaded and ready
+	import { defineCustomElements } from '@revolist/revogrid/loader';
+	defineCustomElements();
+
+	const columns = [
+		{
+			prop: 'name',
+			name: 'First'
+		},
+		{
+			prop: 'details',
+			name: 'Second'
+		}
+	];
+	const source = [
+		{
+			name: '1',
+			details: 'Item 1'
+		},
+		{
+			name: '2',
+			details: 'Item 2'
+		}
+	];
 
 	let pres: number[] = $state([]);
 	let files: FileList = $state(undefined);
@@ -45,44 +64,10 @@
 		console.log(pres);
 		console.log(ws);
 	}
-
-	type dataType = {
-		[columnName: string]: number;
-	};
-
-	const xKey = 'myX';
-	const yKey = 'myY';
-
-	let data: dataType[] = [
-		{ [xKey]: 1979, [yKey]: 7.19 },
-		{ [xKey]: 1980, myY: 7.43 },
-		{ [xKey]: 1981, myY: 7.24 },
-		{ [xKey]: 1983, myY: 7.44 }
-	];
-
-	const r = 3;
-	const padding = 10;
-	const color = '#fff';
-
-	data.forEach((d) => {
-		d[yKey] = +d[yKey];
-	});
-
-	function download() {
-		const svg = document
-			.getElementsByClassName('layercake-layout-svg ')[0]
-			.getElementsByTagName('g')[0];
-
-		console.log(svg);
-		const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' });
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = `File name test.svg`;
-		link.click();
-	}
 </script>
 
 <main>
+	<RevoGrid {source} {columns}></RevoGrid>
 	<button onclick={() => download()}>Download SVG</button>
 
 	<pre>{JSON.stringify(pres, null, 2)}</pre>
@@ -117,6 +102,7 @@
 		</table>
 		<button onclick={exportFile}>Export XLSX</button>
 	{/if}
+	<Sheet {style} {mergeCells} {columns} {data} />
 </main>
 
 <style>
