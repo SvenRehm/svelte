@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { read, utils, writeFileXLSX } from 'xlsx';
-	import { LayerCake, Svg } from 'layercake';
 	import ScatterSvg from './_components/Scatter.svg.svelte';
 	import AxisX from './_components/AxisX.svg.svelte';
 	import AxisY from './_components/AxisY.svg.svelte';
@@ -84,16 +83,6 @@
 </script>
 
 <main>
-	<div class="chart-container">
-		<LayerCake padding={{ top: 10, right: 5, bottom: 20, left: 0 }} x={xKey} y={yKey} {data} debug>
-			<Svg>
-				<AxisX tickMarks={true} tickGutter="1" baseline={true} gridlines={false} />
-				<AxisY tickMarks={true} baseline={true} gridlines={false} />
-				<ScatterSvg {r} fill={color} />
-			</Svg>
-		</LayerCake>
-	</div>
-
 	<button onclick={() => download()}>Download SVG</button>
 
 	<pre>{JSON.stringify(pres, null, 2)}</pre>
