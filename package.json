@@ -35,7 +35,6 @@
   "type": "module",
   "dependencies": {
     "@types/plotly.js": "^2.33.0",
-    "@wolf-table/table": "^0.0.1",
     "canvas-datagrid": "^0.4.7",
     "svelte-plotly.js": "^0.4.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
