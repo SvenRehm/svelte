@@ -18,7 +18,7 @@
 		}
 	]);
 
-	function test() {
+	function downloadImage() {
 		Plotly.downloadImage(ele, {
 			format: 'svg',
 			width: 800,
@@ -34,15 +34,17 @@
 	}
 </script>
 
-<Plot
-	{data}
-	layout={{
-		margin: { t: 0 }
-	}}
-	bind:plot={ele}
-	fillParent="width"
-	debounce={200}
-/>
+<div style="width:100%">
+	<Plot
+		{data}
+		layout={{
+			margin: { t: 0 }
+		}}
+		bind:plot={ele}
+		fillParent="width"
+		debounce={200}
+	/>
+</div>
 
 <button onclick={moreData}>yest</button>
-<button onclick={test}>downolad</button>
+<button onclick={downloadImage}>downolad</button>

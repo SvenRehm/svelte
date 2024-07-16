@@ -1,33 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { read, utils, writeFileXLSX } from 'xlsx';
-	import { RevoGrid } from '@revolist/svelte-datagrid';
-	import type { ColumnRegular } from '@revolist/revogrid';
-
-	// This part to makesure revogrid component is loaded and ready
-	import { defineCustomElements } from '@revolist/revogrid/loader';
-	defineCustomElements();
-
-	const columns = [
-		{
-			prop: 'name',
-			name: 'First'
-		},
-		{
-			prop: 'details',
-			name: 'Second'
-		}
-	];
-	const source = [
-		{
-			name: '1',
-			details: 'Item 1'
-		},
-		{
-			name: '2',
-			details: 'Item 2'
-		}
-	];
 
 	let pres: number[] = $state([]);
 	let files: FileList = $state(undefined);
@@ -67,7 +40,6 @@
 </script>
 
 <main>
-	<RevoGrid {source} {columns}></RevoGrid>
 	<button onclick={() => download()}>Download SVG</button>
 
 	<pre>{JSON.stringify(pres, null, 2)}</pre>
@@ -102,7 +74,6 @@
 		</table>
 		<button onclick={exportFile}>Export XLSX</button>
 	{/if}
-	<Sheet {style} {mergeCells} {columns} {data} />
 </main>
 
 <style>
